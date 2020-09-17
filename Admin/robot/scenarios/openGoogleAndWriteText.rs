@@ -1,0 +1,10 @@
+559x1186=l
+1546x300=l
+786x415=text:программирование
+motionless=key:40
+motionless=key:40
+motionless=key:10
+324x47=text:ввожу что то в урл
+1851x13=l
+1598x301=l
+1598x301=l
