@@ -1,6 +1,7 @@
 package robo.event;
 
 import robo.event.PositionEvent;
+import robo.utils.exception.NoCoordinatesForMoving;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -31,6 +32,6 @@ public class PasteFromBuffer implements PositionEvent {
 
     @Override
     public int[] getCoordinates() {
-        throw new RuntimeException("Action class "+getClass().getSimpleName()+" don't need coordinates for moving");
+        throw new NoCoordinatesForMoving("Action class "+getClass().getSimpleName()+" don't need coordinates for moving");
     }
 }

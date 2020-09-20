@@ -23,9 +23,11 @@ public class WriteTextAtPosition implements PositionEvent {
         robot.mousePress(InputEvent.BUTTON1_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
 
-        String [] txtArray = textToWrite.split("");
-        for (String letter : txtArray){
-            int keyToPressNum = RobotUtils.keyboardMap.get(letter.toLowerCase());
+        String textToWrite = getTextToWrite();
+        for (int i = 0; i < textToWrite.length(); i++){
+            char c = textToWrite.charAt(i);
+            int keyToPressNum = RobotUtils.keyboardMap.get(c);
+
             robot.delay(100);
             robot.keyPress(keyToPressNum);
             robot.keyRelease(keyToPressNum);

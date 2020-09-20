@@ -5,16 +5,15 @@ import robo.event.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
-public class RobotLogic {
+public class ClickRobot {
 
-    private static Robot robot;
+    private Robot robot;
 
-    static {
+    public ClickRobot() {
         try {
             robot = new Robot();
         } catch (AWTException e) {
@@ -22,30 +21,49 @@ public class RobotLogic {
         }
     }
 
-    public static void main(String[] args) {
+    private void showProgramLogo(){
+        System.out.println("  ______  _         __   ______  _    __\n" +
+                           " |  ___/ | |       |_ | |  ___/ | |__/ /\n" +
+                           " | |     | |       | |  | |     |  __ <\n" +
+                           " | |___  | |____   | |  | |___  | |  \\ \\\n" +
+                           " |_____\\ |______\\  |_|  |_____\\ |_|   \\_\\\n" +
+                           " _____    _____   _____    _____   _______\n" +
+                           "|  __ \\  / ___ \\ |  __ \\  / ___ \\ |__   __|\n" +
+                           "| |__| || /   \\ || |__| || /   \\ |   | |\n" +
+                           "| | \\ \\ | \\___/ || |__| || \\___/ |   | |\n" +
+                           "|_|  \\_\\ \\_____/ |_____/  \\_____/    |_|"+"\n");
+    }
+
+    public void startRobot(){
+        showProgramLogo();
         Scanner scanner;
-        System.out.println("\uD83E\uDD16 CLICK ROBOT \uD83E\uDD16");
         boolean showBeginCMD = true;
         while (showBeginCMD) {
             System.out.print("-> ");
             scanner = new Scanner(System.in);
             String myInput = scanner.nextLine();
-            if (myInput.equals("start")) {
-                makeRobotScenario();
-                showBeginCMD = false;
-            } else if (myInput.equals("read")) {
-                System.out.println("File name:");
-                Scanner sc = new Scanner(System.in);
-                String fileName = sc.nextLine();
-                readScenarioFromFile(fileName);
-            } else {
-                System.out.println("No such command");
+            switch (myInput) {
+                case "start":
+                    makeRobotScenario();
+                    showBeginCMD = false;
+                    break;
+                case "read":
+                    System.out.println("File name:");
+                    Scanner sc = new Scanner(System.in);
+                    String fileName = sc.nextLine();
+                    readScenarioFromFile(fileName);
+                    break;
+                case "exit":
+                    showBeginCMD = false;
+                    break;
+                default:
+                    System.out.println("No such command");
+                    break;
             }
         }
-
     }
 
-    private static void makeRobotScenario(){
+    private void makeRobotScenario(){
         List<PositionEvent> events = new ArrayList<>();
         Scanner scanner;
         System.out.println("Start writing commands");
@@ -61,33 +79,39 @@ public class RobotLogic {
             }
         }
 
-        System.out.println("Total events: " + events.size()+"\n");
+        System.out.println("Total events: " + events.size());
 
         Scanner scannerRepeat;
         boolean repeat = true;
         while (repeat) {
-            System.out.println("r - repeat\ns - save to file");
+            System.out.print("r - repeat\ns - save to file\n-> ");
             scannerRepeat = new Scanner(System.in);
-            if (scannerRepeat.nextLine().equals("r")) {
+            String userInput = scannerRepeat.nextLine();
+            if (userInput.equalsIgnoreCase("r")) {
                 runListCommandStream(events);
-            } else if (scannerRepeat.nextLine().equals("s")){
+            } else if (userInput.equalsIgnoreCase("s")){
                 saveScenarioToFile(events);
                 repeat = false;
-            } else {
+            } else if (userInput.equalsIgnoreCase("exit")) {
                 repeat = false;
-                System.out.println("End of program");
+            } else {
+                System.out.println("No such command");
             }
         }
     }
 
-    private static void runListCommandStream(List<PositionEvent> events){
+    private void runListCommandStream(List<PositionEvent> events){
+        System.out.println("Script is executed..");
+        long startRobotWork = System.currentTimeMillis();
         for (PositionEvent positionEvent : events) {
             robot.delay(300);
             positionEvent.doInput();
         }
+        long endRobotWork = System.currentTimeMillis();
+        System.out.println("Script complete. Time: "+(endRobotWork-startRobotWork)/1000+" sec.");
     }
 
-    private static void fillActionList(List<PositionEvent> events, String actionLabel) {
+    private void fillActionList(List<PositionEvent> events, String actionLabel) {
         int[] c = new int[2];
         Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
         c[0] = (int) mouseLocation.getX();
@@ -96,7 +120,7 @@ public class RobotLogic {
         commandFactoryToFillEventsList(actionLabel, events, c);
     }
 
-    private static void commandFactoryToFillEventsList(String actionLabel, List<PositionEvent> events, int[] c){
+    private void commandFactoryToFillEventsList(String actionLabel, List<PositionEvent> events, int[] c){
         /* фабрика комманд */
         if (actionLabel.equals("r")) {
             events.add(new MouseMoveAndRightClick(robot, c));
@@ -155,7 +179,7 @@ public class RobotLogic {
         }
     }
 
-    private static void saveScenarioToFile(List<PositionEvent> events){
+    private void saveScenarioToFile(List<PositionEvent> events){
         System.out.println("File name:");
         Scanner scanner = new Scanner(System.in);
         String fileName = scanner.nextLine();
@@ -203,7 +227,7 @@ public class RobotLogic {
             sb.append("\n");
         }
 
-        File file = new File(System.getProperty("user.home")+"/robot/scenarios/"+fileName+".rs");
+        File file = new File(System.getProperty("user.home")+"/AppData/Local/robot/scenarios/"+fileName+".rs");
         try {
             FileUtils.writeStringToFile(file, sb.toString());
         } catch (IOException e) {
@@ -212,8 +236,8 @@ public class RobotLogic {
         System.out.println("File saved");
     }
 
-    private static void readScenarioFromFile(String fileName){
-        File file = new File(System.getProperty("user.home")+"/robot/scenarios/"+(fileName.endsWith(".rs") ? fileName : fileName+".rs"));
+    private void readScenarioFromFile(String fileName){
+        File file = new File(System.getProperty("user.home")+"/AppData/Local/robot/scenarios/"+(fileName.endsWith(".rs") ? fileName : fileName+".rs"));
         try {
             List<String> commandLines = FileUtils.readLines(file, "UTF-8");
             List<PositionEvent> events = new ArrayList<>();

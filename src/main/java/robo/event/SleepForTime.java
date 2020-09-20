@@ -1,5 +1,7 @@
 package robo.event;
 
+import robo.utils.exception.NoCoordinatesForMoving;
+
 public class SleepForTime implements PositionEvent {
 
     private long sleepTime;
@@ -24,7 +26,7 @@ public class SleepForTime implements PositionEvent {
 
     @Override
     public int[] getCoordinates() {
-        throw new RuntimeException("Action class "+getClass().getSimpleName()+" don't need coordinates for moving");
+        throw new NoCoordinatesForMoving("Action class "+getClass().getSimpleName()+" don't need coordinates for moving");
     }
 
     public long getSleepTime() {

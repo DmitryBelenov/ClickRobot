@@ -1,5 +1,7 @@
 package robo.event;
 
+import robo.utils.exception.NoCoordinatesForMoving;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -29,6 +31,6 @@ public class ActiveWindowToFullScreen implements PositionEvent {
 
     @Override
     public int[] getCoordinates() {
-        throw new RuntimeException("Action class "+getClass().getSimpleName()+" don't need coordinates for moving");
+        throw new NoCoordinatesForMoving("Action class "+getClass().getSimpleName()+" don't need coordinates for moving");
     }
 }
