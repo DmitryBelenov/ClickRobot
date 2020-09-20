@@ -79,6 +79,10 @@ public class ClickRobot {
             }
         }
 
+        repeatOrSaveCurrentScenario(events);
+    }
+
+    private void repeatOrSaveCurrentScenario(List<PositionEvent> events){
         System.out.println("Total events: " + events.size());
 
         Scanner scannerRepeat;
